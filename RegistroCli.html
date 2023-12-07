@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!-- Created By CodingLab - www.codinglabweb.com -->
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Registration Form | CodingLab</title>
+  <link rel="stylesheet" href="registro.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <div class="container">
+    <div class="title">Registro de Clientes</div>
+    <div class="content">
+      <form>
+        <div class="user-details">
+          <div class="input-box">
+            <span class="details">Nombre Completo</span>
+            <input type="text" id="nombre" placeholder="Ingrese los Nombres" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Usuario</span>
+            <input type="text" id="usuario" placeholder="Ingrese un Usuario" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Email</span>
+            <input type="email" id="email" placeholder="Ingrese un Email" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Numero De Telefono</span>
+            <input type="tel" id="telefono" placeholder="Ingrese un Telefono" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Contraseña</span>
+            <input type="password" id="contrasena" placeholder="Ingrese una Contraseña" required>
+          </div>
+        </div>
+        <br>
+        <div class="Registro1">
+          <button class="Registro1" type="button" onclick="crearRegistro()">Registrarse</button>
+          <br>
+        </div>
+        <br>
+        <div class="Registro1">
+          <a class="visualizar1" href="visualizar.html">Ingrese aqui</a>
+        </div>
+        <br>
+      </form>
+
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+      
+        const firebaseConfig = {
+          // Tu configuración de Firebase aquí
+            apiKey: "AIzaSyCdol1HUlezSerGhVYwP7CurgsnbiERfYM",
+            authDomain: "coneccion-ab493.firebaseapp.com",
+            databaseURL: "https://coneccion-ab493-default-rtdb.firebaseio.com",
+            projectId: "coneccion-ab493",
+            storageBucket: "coneccion-ab493.appspot.com",
+            messagingSenderId: "1088096778093",
+            appId: "1:1088096778093:web:22e7579ba164106b424c64"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.crearRegistro = function () {
+          const nombre = document.getElementById("nombre").value.trim();
+          const usuario = document.getElementById("usuario").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const telefono = document.getElementById("telefono").value.trim();
+          const contrasena = document.getElementById("contrasena").value.trim();
+
+          // Validación de campos
+          if (nombre === '' || usuario === '' || email === '' || telefono === '' || contrasena === '') {
+            alert('Por favor, complete todos los campos');
+            return;
+          }
+
+          if (!validateEmail(email)) {
+            alert('Ingrese un email válido');
+            return;
+          }
+
+          if (!validatePhoneNumber(telefono)) {
+            alert('Ingrese un número de teléfono válido');
+            return;
+          }
+
+          // Envío de datos a Firebase
+          push(
+            ref(database, 'RegistroClientes'),
+            {
+              name: nombre,
+              usuario: usuario,
+              email: email,
+              telefono: telefono,
+              contrasena: contrasena
+            }
+          );
+
+          alert('Registro exitoso');
+          // Limpieza de los campos después del registro
+          document.getElementById('nombre').value = nombre;
+          document.getElementById('usuario').value = usuario;
+          document.getElementById('email').value = email;
+          document.getElementById('telefono').value = telefono;
+          document.getElementById('contrasena').value = contrasena;
+        }
+
+        function validateEmail(email) {
+          const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return re.test(String(email).toLowerCase());
+        }
+
+        function validatePhoneNumber(phoneNumber) {
+          const re = /^\d{10}$/;
+          return re.test(String(phoneNumber));
+        }
+      </script>
+    </div>
+  </div>
+</body>
+</html>
