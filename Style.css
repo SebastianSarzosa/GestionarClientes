@@ -1,3 +1,72 @@
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Agregado para separar la tabla del contenido anterior */
+  }
+  
+  th, td {
+    border: 1px solid #000000;
+    padding: 10px; /* Ajustado para dar más espacio al contenido */
+    text-align: center; /* Centrar el texto en las celdas */
+  }
+  
+  th {
+    background-color: rgba(124, 103, 247, 0.282);
+    font-weight: 500; /* Hacer más visible el encabezado */
+    color: white; /* Cambiar el color del texto del encabezado */
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f6f6f6; /* Color de fondo para filas pares */
+  }
+  
+  /* Estilos para el botón de eliminar */
+  button.eliminar {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px; /* Ajustado para mejorar el espacio del botón */
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* Agregada animación de transición */
+  }
+  
+  button.eliminar:hover {
+    background-color: #d32f2f;
+  }
+  
+
+  /* Estilos para el título */
+.title-container {
+  text-align: center; /* Centrar el título */
+  margin-bottom: 20px; /* Espacio bajo el título */
+}
+
+.title {
+  font-size: 32px; /* Tamaño del texto del título */
+  font-weight: bold; /* Hacer el texto más audaz */
+  color: #333; /* Color del texto del título */
+  text-transform: uppercase; /* Convertir el texto a mayúsculas */
+}
+
+
+/* Estilos para el botón de Modificar */
+.btn-modificar {
+  background-color: #2ecc71; /* Verde Esmeralda */
+  color: white;
+  /* Otros estilos de tu botón */
+}
+
+/* Estilos para el botón de Eliminar */
+.btn-eliminar {
+  background-color: #f44336; /* Rojo */
+  color: white;
+  /* Otros estilos de tu botón */
+}
+
+
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 * {
   margin: 0;

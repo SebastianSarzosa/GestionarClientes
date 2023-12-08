@@ -1,125 +1,259 @@
 <!DOCTYPE html>
-<!-- Created By CodingLab - www.codinglabweb.com -->
 <html lang="en" dir="ltr">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Responsive Registration Form | CodingLab</title>
-  <link rel="stylesheet" href="registro.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Registro y Visualización de Clientes</title>
+    <link rel="stylesheet" href="Style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="crud.js"></script>
+
 </head>
 
 <body>
-  <div class="container">
-    <div class="title">Registro de Clientes</div>
-    <div class="content">
-      <form>
-        <div class="user-details">
-          <div class="input-box">
-            <span class="details">Nombre Completo</span>
-            <input type="text" id="nombre" placeholder="Ingrese los Nombres" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Usuario</span>
-            <input type="text" id="usuario" placeholder="Ingrese un Usuario" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Email</span>
-            <input type="email" id="email" placeholder="Ingrese un Email" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Numero De Telefono</span>
-            <input type="tel" id="telefono" placeholder="Ingrese un Telefono" required>
-          </div>
-          <div class="input-box">
-            <span class="details">Contraseña</span>
-            <input type="password" id="contrasena" placeholder="Ingrese una Contraseña" required>
-          </div>
+    <div class="container">
+        <div class="content">
+            <div class="title">Registro de Clientes</div>
+            <form>
+                <!-- Formulario de ingreso de clientes -->
+                <div class="user-details">
+                    <div class="input-box">
+                        <span class="details">Nombre Completo</span>
+                        <input type="text" id="nombre" placeholder="Ingrese los Nombres" required>
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Usuario</span>
+                        <input type="text" id="usuario" placeholder="Ingrese un Usuario" required>
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Email</span>
+                        <input type="email" id="email" placeholder="Ingrese un Email" required>
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Numero De Telefono</span>
+                        <input type="tel" id="telefono" placeholder="Ingrese un Telefono" required>
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Contraseña</span>
+                        <input type="password" id="contrasena" placeholder="Ingrese una Contraseña" required>
+                    </div>
+                    <br>
+                    <div class="Registro1">
+                        <button class="Registro1" type="button" onclick="crearRegistro()">Registrarse</button>
+                    </div>
+                    <br>
+                </div>
+            </form>
         </div>
-        <br>
-        <div class="Registro1">
-          <button class="Registro1" type="button" onclick="crearRegistro()">Registrarse</button>
-          <br>
+        
+        <!-- Opciones al lado -->
+        <div class="options">
+            <div class="option">
+                <button class="Registro1" type="button" onclick="actualizarRegistro()">Actualizar</button>
+            </div>
+            <br>
+            
         </div>
+        
+        <!-- Visualización de clientes -->
         <br>
-        <div class="Registro1">
-          <a class="visualizar1" href="visualizar.html">Ingrese aqui</a>
+        <div class="title-container">
+        
+            <h1 class="title">Clientes Registrados</h1>
         </div>
-        <br>
-      </form>
+        <div id="mensaje"></div>
+        <table id="tablaClientes">
+            <thead>
+                <tr>
+                    <th>Nombre Completo</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Numero De Telefono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
+    </div>
 
-      <script type="module">
+    <script type="module">
+        // JavaScript para la visualización de clientes y registro
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-      
+        import { getDatabase, ref, onValue, remove, push, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+        // Configuración de Firebase
         const firebaseConfig = {
-          // Tu configuración de Firebase aquí
-            apiKey: "AIzaSyCdol1HUlezSerGhVYwP7CurgsnbiERfYM",
-            authDomain: "coneccion-ab493.firebaseapp.com",
-            databaseURL: "https://coneccion-ab493-default-rtdb.firebaseio.com",
-            projectId: "coneccion-ab493",
-            storageBucket: "coneccion-ab493.appspot.com",
-            messagingSenderId: "1088096778093",
-            appId: "1:1088096778093:web:22e7579ba164106b424c64"
-        };
-      
+          apiKey: "AIzaSyCdol1HUlezSerGhVYwP7CurgsnbiERfYM",
+          authDomain: "coneccion-ab493.firebaseapp.com",
+          databaseURL: "https://coneccion-ab493-default-rtdb.firebaseio.com",
+          projectId: "coneccion-ab493",
+          storageBucket: "coneccion-ab493.appspot.com",
+          messagingSenderId: "1088096778093",
+          appId: "1:1088096778093:web:22e7579ba164106b424c64"
+        };  
+
+        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+        const tablaBody = document.getElementById('tablaBody');
+        let selectedKey = null; // Variable para almacenar la clave seleccionada para actualizar/eliminar
+        
+        // Obtener referencia a la lista de clientes registrados
+        const clientesRef = ref(database, 'Sarzosa');
+        
+        // Escuchar cambios en los datos
+        onValue(clientesRef, (snapshot) => {
+            tablaBody.innerHTML = '';
+            
+            // Recorrer los datos y agregarlos a la tabla
+            snapshot.forEach((clienteSnapshot) => {
+                const cliente = clienteSnapshot.val();
+                const row = `<tr>
+                    <td>${cliente.nombreCompleto}</td>
+                    <td>${cliente.usuario}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.numeroDeTelefono}</td>
+                    <td>
+                        <button class="btn-modificar" onclick="seleccionarCliente('${clienteSnapshot.key}')">Editar</button>
+                        <button class="btn-eliminar" onclick="eliminarCliente('${clienteSnapshot.key}')">Borrar</button>
+                    </td>
+                </tr>`;
+                tablaBody.innerHTML += row;
+            });
+        });
+
+        function mostrarMensaje(mensaje, esError = false) {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = mensaje;
+            mensajeDiv.style.color = esError ? 'red' : 'green';
+        }
 
         window.crearRegistro = function () {
-          const nombre = document.getElementById("nombre").value.trim();
-          const usuario = document.getElementById("usuario").value.trim();
-          const email = document.getElementById("email").value.trim();
-          const telefono = document.getElementById("telefono").value.trim();
-          const contrasena = document.getElementById("contrasena").value.trim();
+            // Obtener los valores del formulario
+            const nombre = document.getElementById("nombre").value.trim();
+            const usuario = document.getElementById("usuario").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const telefono = document.getElementById("telefono").value.trim();
+            const contrasena = document.getElementById("contrasena").value.trim();
 
-          // Validación de campos
-          if (nombre === '' || usuario === '' || email === '' || telefono === '' || contrasena === '') {
-            alert('Por favor, complete todos los campos');
-            return;
-          }
-
-          if (!validateEmail(email)) {
-            alert('Ingrese un email válido');
-            return;
-          }
-
-          if (!validatePhoneNumber(telefono)) {
-            alert('Ingrese un número de teléfono válido');
-            return;
-          }
-
-          // Envío de datos a Firebase
-          push(
-            ref(database, 'RegistroClientes'),
-            {
-              name: nombre,
-              usuario: usuario,
-              email: email,
-              telefono: telefono,
-              contrasena: contrasena
+            // Validar los campos
+            if (nombre === '' || usuario === '' || email === '' || telefono === '' || contrasena === '') {
+                alert('Por favor, complete todos los campos');
+                return;
             }
-          );
 
-          alert('Registro exitoso');
-          // Limpieza de los campos después del registro
-          document.getElementById('nombre').value = nombre;
-          document.getElementById('usuario').value = usuario;
-          document.getElementById('email').value = email;
-          document.getElementById('telefono').value = telefono;
-          document.getElementById('contrasena').value = contrasena;
+            if (!validateEmail(email)) {
+                alert('Ingrese un email válido');
+                return;
+            }
+
+            if (!validatePhoneNumber(telefono)) {
+                alert('Ingrese un número de teléfono válido');
+                return;
+            }
+
+            // Enviar datos a Firebase
+            push(ref(database, 'Sarzosa'), {
+                nombreCompleto: nombre,
+                usuario: usuario,
+                email: email,
+                numeroDeTelefono: telefono,
+                contrasena: contrasena
+            });
+
+            alert('Registro exitoso');
+            // Limpiar campos después del registro
+            limpiarCampos();
+        }
+
+        function limpiarCampos() {
+            document.getElementById('nombre').value = '';
+            document.getElementById('usuario').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('telefono').value = '';
+            document.getElementById('contrasena').value = '';
         }
 
         function validateEmail(email) {
-          const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          return re.test(String(email).toLowerCase());
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
         }
 
         function validatePhoneNumber(phoneNumber) {
-          const re = /^\d{10}$/;
-          return re.test(String(phoneNumber));
+            const re = /^\d{10}$/;
+            return re.test(String(phoneNumber));
         }
-      </script>
-    </div>
-  </div>
+
+        window.seleccionarCliente = function (key) {
+            selectedKey = key;
+            // Obtener el cliente seleccionado
+            const clienteRef = ref(database, `Sarzosa/${key}`);
+            onValue(clienteRef, (snapshot) => {
+                const cliente = snapshot.val();
+                // Llenar el formulario con los datos del cliente seleccionado
+                document.getElementById("nombre").value = cliente.nombreCompleto;
+                document.getElementById("usuario").value = cliente.usuario;
+                document.getElementById("email").value = cliente.email;
+                document.getElementById("telefono").value = cliente.numeroDeTelefono;
+                document.getElementById("contrasena").value = cliente.contrasena;
+            });
+        }
+
+        window.actualizarRegistro = function () {
+            if (selectedKey) {
+                // Obtener los nuevos valores del formulario
+                const nombre = document.getElementById("nombre").value.trim();
+                const usuario = document.getElementById("usuario").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const telefono = document.getElementById("telefono").value.trim();
+                const contrasena = document.getElementById("contrasena").value.trim();
+
+                // Validar los campos
+                if (nombre === '' || usuario === '' || email === '' || telefono === '' || contrasena === '') {
+                    alert('Por favor, complete todos los campos');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    alert('Ingrese un email válido');
+                    return;
+                }
+
+                if (!validatePhoneNumber(telefono)) {
+                    alert('Ingrese un número de teléfono válido');
+                    return;
+                }
+
+                // Actualizar los datos en Firebase
+                set(ref(database, `Sarzosa/${selectedKey}`), {
+                    nombreCompleto: nombre,
+                    usuario: usuario,
+                    email: email,
+                    numeroDeTelefono: telefono,
+                    contrasena: contrasena
+                });
+
+                alert('Registro actualizado exitosamente');
+                // Limpiar campos después de la actualización
+                limpiarCampos();
+                selectedKey = null;
+            } else {
+                alert('Por favor, seleccione un cliente para actualizar');
+            }
+        }
+
+        window.eliminarCliente = function (key) {
+            if (confirm('¿Estás seguro de que quieres eliminar este cliente?')) {
+                remove(ref(database, `Sarzosa/${key}`))
+                    .then(() => {
+                        mostrarMensaje('Cliente eliminado correctamente', false);
+                    })
+                    .catch((error) => {
+                        mostrarMensaje(`Error al eliminar cliente: ${error}`, true);
+                    });
+            }
+        };
+    </script>
 </body>
+
 </html>
