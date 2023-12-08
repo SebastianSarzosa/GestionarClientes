@@ -6,13 +6,13 @@ table {
   }
   
   th, td {
-    border: 1px solid #000000;
+    border: 1px solid #5a5a5a;
     padding: 10px; /* Ajustado para dar más espacio al contenido */
     text-align: center; /* Centrar el texto en las celdas */
   }
   
   th {
-    background-color: rgba(124, 103, 247, 0.282);
+    background-color: rgba(13, 126, 118, 0.282);
     font-weight: 500; /* Hacer más visible el encabezado */
     color: white; /* Cambiar el color del texto del encabezado */
   }
@@ -25,10 +25,10 @@ table {
   button.eliminar {
     background-color: #f44336;
     color: white;
-    border: none;
-    padding: 8px 12px; /* Ajustado para mejorar el espacio del botón */
+    border: red;
+    padding: 7px 12px; /* Ajustado para mejorar el espacio del botón */
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 10px;
     transition: background-color 0.3s ease; /* Agregada animación de transición */
   }
   
@@ -53,8 +53,9 @@ table {
 
 /* Estilos para el botón de Modificar */
 .btn-modificar {
-  background-color: #2ecc71; /* Verde Esmeralda */
+  background-color: #08ff67; /* Verde Esmeralda */
   color: white;
+  border-radius: 2px;
   /* Otros estilos de tu botón */
 }
 
